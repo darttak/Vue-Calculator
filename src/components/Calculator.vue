@@ -1,24 +1,9 @@
 <template>
   <div class="calculator">
-    <div class="display">{{current || '0'}}</div>
+    <input type="text" class="display" v-model="result" placeholder="0" />
     <button @click="clear" class="btn">C</button>
-    <button @click="sign" class="btn">+/-</button>
-    <button @click="percent" class="btn">%</button>
-    <button @click="divide" class="btn operator">/</button>
-    <button @click="append('7')" class="btn">7</button>
-    <button @click="append('8')" class="btn">8</button>
-    <button @click="append('9')" class="btn">9</button>
-    <button @click="multiply" class="btn operator">x</button>
-    <button @click="append('4')" class="btn">4</button>
-    <button @click="append('5')" class="btn">5</button>
-    <button @click="append('6')" class="btn">6</button>
-    <button @click="minus" class="btn operator">-</button>
-    <button @click="append('1')" class="btn">1</button>
-    <button @click="append('2')" class="btn">2</button>
-    <button @click="append('3')" class="btn">3</button>
-    <button @click="plus" class="btn operator">+</button>
-    <button @click="append('0')" class="btn zero">0</button>
-    <button @click="dot" class="btn">.</button>
+    <button @click="input(num)" class="btn" v-bind:key="num" v-for="num in numbers">{{num}}</button>
+    <button @click="input(op)" class="btn operator" v-bind:key="op" v-for="op in operations">{{op}}</button>
     <button @click="equal" class="btn operator">=</button>
   </div>
 </template>
@@ -27,63 +12,20 @@
 export default {
   data() {
     return {
-      current: "",
-      previous: null,
-      operatorClicked: false,
-      operator: null,
+      numbers: [1, 2, 3, 4, 5, 6, 7, 8, 9, 0],
+      result: "",
+      operations: ["+", "-", "*", "/"],
     };
   },
   methods: {
-    clear() {
-      this.current = "";
+    input: function (char) {
+      this.result += char;
     },
-    sign() {
-      this.current =
-        this.current.charAt(0) === "-"
-          ? this.current.slice(1)
-          : `-${this.current}`;
+    clear: function () {
+      this.result = "";
     },
-    percent() {
-      this.current = `${parseFloat(this.current) / 100}`;
-    },
-    append(number) {
-      if (this.operatorClicked) {
-        this.current = "";
-        this.operatorClicked = false;
-      }
-      this.current = `${this.current}${number}`;
-    },
-    divide() {
-      this.operator = (a, b) => a / b;
-      this.previous = this.current;
-      this.operatorClicked = true;
-    },
-    multiply() {
-      this.operator = (a, b) => a * b;
-      this.previous = this.current;
-      this.operatorClicked = true;
-    },
-    minus() {
-      this.operator = (a, b) => a - b;
-      this.previous = this.current;
-      this.operatorClicked = true;
-    },
-    plus() {
-      this.operator = (a, b) => a + b;
-      this.previous = this.current;
-      this.operatorClicked = true;
-    },
-    dot() {
-      if (this.current.indexOf(".") === -1) {
-        this.append(".");
-      }
-    },
-    equal() {
-      this.current = `${this.operator(
-        parseFloat(this.previous),
-        parseFloat(this.current)
-      )}`;
-      this.previous = null;
+    equal: function () {
+      this.result = eval(this.result);
     },
   },
 };
@@ -109,6 +51,8 @@ button:hover {
 }
 .display {
   font-family: digital-7;
+  font-size: 35px;
+  text-align: right;
   grid-column: 1/5;
   background-color: rgb(67, 71, 67);
   color: white;
